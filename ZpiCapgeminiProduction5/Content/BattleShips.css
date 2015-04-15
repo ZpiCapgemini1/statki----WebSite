@@ -1,0 +1,32 @@
+﻿.intro {
+    font-size: 10pt;
+    font-style: italic;
+}
+
+.heading {
+    font-size: 14pt;
+    font-weight: bold;
+    font-family: Arial;
+}
+
+.title {
+    font-size: 18pt;
+    font-weight: bold;
+    background-color: navy;
+    color: white;
+    text-align: center;
+    font-family: Arial;
+}
+
+.table{
+  border: 1px solid black;
+}
+.table td {
+  border: 1px solid black; /* Style just to show the table cell boundaries */
+}
+
+
+.table.no-spacing {
+  border-spacing:0; /* Removes the cell spacing via CSS */
+  border-collapse: collapse;  /* Optional - if you don't want to have double border where cells touch */
+}
