@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ZpiCapgeminiProduction5.Hubs;
 
 namespace ZpiCapgeminiProduction5.Controllers
 {
@@ -18,5 +19,13 @@ namespace ZpiCapgeminiProduction5.Controllers
         {
             return View();
         }
+
+        public ActionResult UsersList()
+        {
+            
+              
+            return View(ChatHub.ConnectedUsers);
+        }
+
     }
 }

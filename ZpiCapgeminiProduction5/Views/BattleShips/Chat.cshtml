@@ -27,11 +27,22 @@
             $('#displayname').val(prompt('Enter your name:', ''));
             // Set initial focus to message input box.
             $('#message').focus();
+
             // Connections start.
             $.connection.hub.start().done(function () {
+                // Add new user
+                chat.server.addUser($('#displayname').val());
                 $('#sendMessageButton').click(function () {
                     // Call the Send method on the hub.
                     chat.server.send($('#displayname').val(), $('#message').val());
+
+
+
+                    // Bieniek !! twoja funkcja !
+                    chat.server.sendPrivateMessage("Pszemek", $('#message').val());
+
+
+
                     // Clear text box and reset focus for next comment.
                     $('#message').val('').focus();
                 });
