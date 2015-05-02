@@ -15,15 +15,9 @@ namespace ZpiCapgeminiProduction5.Hubs
         public static List<UserDetail> ConnectedUsers = new List<UserDetail>();
 
 
-        public void GetUsersList(string username)
+        public void GetUsersList()
         {
-            var user = ConnectedUsers.FirstOrDefault(x => x.UserName == username);
-            if (user != null)
-            {
-                var userId = user.ConnectionId;
-                Clients.Client(userId).SetUsersList(ConnectedUsers);
-
-            }
+            Clients.Caller.SetUsersList(ConnectedUsers);
         }
 
         public void SendCoordinates(string toUserName, int row, int column)
@@ -34,7 +28,6 @@ namespace ZpiCapgeminiProduction5.Hubs
             {
                 var userId = user.ConnectionId;
                 Clients.Client(userId).GetCoordinates(row, column);
-
             }
         }
 
@@ -59,35 +52,12 @@ namespace ZpiCapgeminiProduction5.Hubs
             }
         }
 
-        //public void SendPrivateMessage(string toUserName, int x, int y)
-        //{
-
-        //    string fromUserId = Context.ConnectionId;
-        //    var userDetail = ConnectedUsers.FirstOrDefault(x => x.ConnectionId == fromUserId);
-        //    var firstOrDefault = ConnectedUsers.FirstOrDefault(x => x.UserName == toUserName);
-
-        //    if (userDetail != null)
-        //    {
-        //        var fromUserName = userDetail.UserName;
-
-        //        if (firstOrDefault != null)
-        //        {
-        //            var toUserId = firstOrDefault.ConnectionId;
-
-        //            // send to 
-        //            Clients.Client(toUserId).addNewMessageToPage(fromUserName, message);
-        //        }
-        //    }
-        //}
-
         public void Send(string name, string message)
         {
             // for all users
             Clients.All.addNewMessageToPage(name, message);
         }
-
-
-
+        
         public void AddUser(string name)
         {
             var newUser = new UserDetail
@@ -96,13 +66,6 @@ namespace ZpiCapgeminiProduction5.Hubs
                 ConnectionId = Context.ConnectionId
             };
             ConnectedUsers.Add(newUser);
-        }
-
-        public override Task OnConnected()
-        {
-
-
-            return base.OnConnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
