@@ -1,0 +1,140 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ZpiCapgeminiDataBaseModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="GRACZ">
+          <Key>
+            <PropertyRef Name="Login" />
+          </Key>
+          <Property Name="Login" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Hasło" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="Imie" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="Nazwisko" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="E-mail" Type="nvarchar" MaxLength="40" Nullable="false" />
+        </EntityType>
+        <EntityType Name="POTYCZKI">
+          <Key>
+            <PropertyRef Name="ID_potyczki" />
+          </Key>
+          <Property Name="ID_potyczki" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Login" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="Wynik" Type="nvarchar" MaxLength="5" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_POTYCZKI_GRACZ">
+          <End Role="GRACZ" Type="Self.GRACZ" Multiplicity="1" />
+          <End Role="POTYCZKI" Type="Self.POTYCZKI" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GRACZ">
+              <PropertyRef Name="Login" />
+            </Principal>
+            <Dependent Role="POTYCZKI">
+              <PropertyRef Name="Login" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ZpiCapgeminiDataBaseModelStoreContainer">
+          <EntitySet Name="GRACZ" EntityType="Self.GRACZ" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="POTYCZKI" EntityType="Self.POTYCZKI" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_POTYCZKI_GRACZ" Association="Self.FK_POTYCZKI_GRACZ">
+            <End Role="GRACZ" EntitySet="GRACZ" />
+            <End Role="POTYCZKI" EntitySet="POTYCZKI" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ZpiCapgeminiDataBaseModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="GRACZ">
+          <Key>
+            <PropertyRef Name="Login" />
+          </Key>
+          <Property Name="Login" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Hasło" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Imie" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Nazwisko" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="E_mail" Type="String" MaxLength="40" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="POTYCZKI" Relationship="Self.FK_POTYCZKI_GRACZ" FromRole="GRACZ" ToRole="POTYCZKI" />
+        </EntityType>
+        <EntityType Name="POTYCZKI">
+          <Key>
+            <PropertyRef Name="ID_potyczki" />
+          </Key>
+          <Property Name="ID_potyczki" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Login" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Wynik" Type="String" MaxLength="5" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="GRACZ" Relationship="Self.FK_POTYCZKI_GRACZ" FromRole="POTYCZKI" ToRole="GRACZ" />
+        </EntityType>
+        <Association Name="FK_POTYCZKI_GRACZ">
+          <End Role="GRACZ" Type="Self.GRACZ" Multiplicity="1" />
+          <End Role="POTYCZKI" Type="Self.POTYCZKI" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="GRACZ">
+              <PropertyRef Name="Login" />
+            </Principal>
+            <Dependent Role="POTYCZKI">
+              <PropertyRef Name="Login" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="ZpiCapgeminiDataBaseEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="GRACZ" EntityType="Self.GRACZ" />
+          <EntitySet Name="POTYCZKI" EntityType="Self.POTYCZKI" />
+          <AssociationSet Name="FK_POTYCZKI_GRACZ" Association="Self.FK_POTYCZKI_GRACZ">
+            <End Role="GRACZ" EntitySet="GRACZ" />
+            <End Role="POTYCZKI" EntitySet="POTYCZKI" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ZpiCapgeminiDataBaseModelStoreContainer" CdmEntityContainer="ZpiCapgeminiDataBaseEntities">
+          <EntitySetMapping Name="GRACZ">
+            <EntityTypeMapping TypeName="ZpiCapgeminiDataBaseModel.GRACZ">
+              <MappingFragment StoreEntitySet="GRACZ">
+                <ScalarProperty Name="Login" ColumnName="Login" />
+                <ScalarProperty Name="Hasło" ColumnName="Hasło" />
+                <ScalarProperty Name="Imie" ColumnName="Imie" />
+                <ScalarProperty Name="Nazwisko" ColumnName="Nazwisko" />
+                <ScalarProperty Name="E_mail" ColumnName="E-mail" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="POTYCZKI">
+            <EntityTypeMapping TypeName="ZpiCapgeminiDataBaseModel.POTYCZKI">
+              <MappingFragment StoreEntitySet="POTYCZKI">
+                <ScalarProperty Name="ID_potyczki" ColumnName="ID_potyczki" />
+                <ScalarProperty Name="Login" ColumnName="Login" />
+                <ScalarProperty Name="Wynik" ColumnName="Wynik" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="true" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

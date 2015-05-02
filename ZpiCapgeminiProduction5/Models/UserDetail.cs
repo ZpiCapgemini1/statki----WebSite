@@ -9,5 +9,7 @@ namespace ZpiCapgeminiProduction5.Models
     {
         public string ConnectionId { get; set; }
         public string UserName { get; set; }
+        public bool IsAvailable { get; set; }
+
     }
 }

@@ -15,6 +15,29 @@ namespace ZpiCapgeminiProduction5.Hubs
         public static List<UserDetail> ConnectedUsers = new List<UserDetail>();
 
 
+        public void GetUsersList(string username)
+        {
+            var user = ConnectedUsers.FirstOrDefault(x => x.UserName == username);
+            if (user != null)
+            {
+                var userId = user.ConnectionId;
+                Clients.Client(userId).SetUsersList(ConnectedUsers);
+
+            }
+        }
+
+        public void SendCoordinates(string toUserName, int row, int column)
+        {
+
+            var user = ConnectedUsers.FirstOrDefault(x => x.UserName == toUserName);
+            if (user != null)
+            {
+                var userId = user.ConnectionId;
+                Clients.Client(userId).GetCoordinates(row, column);
+
+            }
+        }
+
         public void SendPrivateMessage(string toUserName, string message)
         {
 
@@ -36,8 +59,26 @@ namespace ZpiCapgeminiProduction5.Hubs
             }
         }
 
+        //public void SendPrivateMessage(string toUserName, int x, int y)
+        //{
 
+        //    string fromUserId = Context.ConnectionId;
+        //    var userDetail = ConnectedUsers.FirstOrDefault(x => x.ConnectionId == fromUserId);
+        //    var firstOrDefault = ConnectedUsers.FirstOrDefault(x => x.UserName == toUserName);
 
+        //    if (userDetail != null)
+        //    {
+        //        var fromUserName = userDetail.UserName;
+
+        //        if (firstOrDefault != null)
+        //        {
+        //            var toUserId = firstOrDefault.ConnectionId;
+
+        //            // send to 
+        //            Clients.Client(toUserId).addNewMessageToPage(fromUserName, message);
+        //        }
+        //    }
+        //}
 
         public void Send(string name, string message)
         {

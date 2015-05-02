@@ -43,6 +43,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
@@ -74,6 +77,8 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -139,6 +144,27 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Hubs\ChatHub.cs" />
+    <Compile Include="Models\DatabaseEntityModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DatabaseEntityModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DatabaseEntityModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DatabaseEntityModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\DatabaseEntityModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DatabaseEntityModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\GRACZ.cs">
+      <DependentUpon>DatabaseEntityModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\POTYCZKI.cs">
+      <DependentUpon>DatabaseEntityModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\UserDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
@@ -181,6 +207,23 @@
     <Content Include="Icon.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <EntityDeploy Include="Models\DatabaseEntityModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>DatabaseEntityModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\DatabaseEntityModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DatabaseEntityModel.edmx</DependentUpon>
+      <LastGenOutput>DatabaseEntityModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\DatabaseEntityModel.edmx.diagram">
+      <DependentUpon>DatabaseEntityModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Models\DatabaseEntityModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>DatabaseEntityModel.edmx</DependentUpon>
+      <LastGenOutput>DatabaseEntityModel.cs</LastGenOutput>
+    </Content>
     <None Include="Properties\PublishProfiles\ZpiCapgemini2 - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\ZpiCapgemini2 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -214,6 +257,7 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\BattleShips\UsersList.cshtml" />
+    <Content Include="Views\BattleShips\UsersIndex.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -221,6 +265,9 @@
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
