@@ -1,0 +1,374 @@
+﻿@{
+    ViewBag.Title = "BattleShips VS Player";
+}
+
+<h2>BattleShips</h2>
+
+
+
+
+<html>
+<head>
+    <title>Statki !</title>
+    <link href="@Url.Content("~/Content/BattleShips.css")"
+          rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+    <h2>Chat</h2>
+    <div class="container">
+        <input type="text" id="message" />
+        <input type="button" id="sendMessageButton" value="Send" />
+        <input type="hidden" id="displayname" />
+        <ul id="discussion"></ul>
+    </div>
+
+
+    @section scripts {
+        <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+        <script src="~/signalr/hubs"></script>
+
+        <script language="JavaScript">
+
+
+            /// var playerName = "";
+
+            //<!-- Begin
+            /* Information used to draw the ships*/
+            var ship = [[[1, 5], [1, 2, 5], [1, 2, 3, 5], [1, 2, 3, 4, 5]], [[6, 10], [6, 7, 10], [6, 7, 8, 10], [6, 7, 8, 9, 10]]];
+
+            /* Information used to draw sunk ships*/
+            var dead = [[[201, 203], [201, 202, 203], [201, 202, 202, 203], [201, 202, 202, 202, 203]], [[204, 206], [204, 205, 206], [204, 205, 205, 206], [204, 205, 205, 205, 206]]];
+
+            /* Information used to describe ships*/
+            var shiptypes = [["Minesweeper", 2, 4], ["Frigate", 3, 4], ["Cruiser", 4, 2], ["Battleship", 5, 1]];
+
+            var gridx = 16, gridy = 16;
+            var player = [], computer = [], playersships = [], computersships = [];
+            var playerlives = 0, computerlives = 0, playflag = true, statusmsg = "";
+
+
+            var playerName = prompt("Please enter your name", "P1");
+
+            /*----------------------------------------------------------------------------------- Chat Start------------------*/
+
+            // Get the user name
+
+            var chat = $.connection.chatHub;
+            // Create functions to use by server
+            chat.client.addNewMessageToPage = function (name, message) {
+                // Add the message to the page.
+                $('#discussion').append('<li><strong>' + htmlEncode(name)
+                    + '</strong>: ' + htmlEncode(message) + '</li>');
+            };
+
+
+
+
+            //sink recevied field
+            chat.client.getSinkInfo = function (row, column, fieldValue) {
+                if (fieldValue < 100) {
+                    setImage(row, column, 103, true);
+                    var shipno = computer[row][column][1];
+                    if (--computersships[shipno][1] == 0) {
+                        sinkShip(computer, shipno, true);
+                        ///     alert("You sank his " + shiptypes[computersships[shipno][0]][0] + "!");
+                        updateStatus();
+
+                    }
+                } else if (fieldValue == 100) {
+                    setImage(row, column, 102, true);
+                }
+            }
+
+
+            chat.client.sinkShip = function (row, column, fieldValue) {
+                setImage(row, column, fieldValue, true);
+                  }
+            
+
+            chat.client.getCoordinates = function (row, column) {
+                // Add the message to the page.
+
+                ///     $('#discussion').append('<li><strong>' + htmlEncode(row)
+                ///      + '</strong>: ' + htmlEncode(column) + '</li>');
+
+                var fieldValue = player[row][column][0];
+                ///                 ================================do modyfikacji====================
+                if (playerName === 'P1')
+                    chat.server.sendSinkInfoToEnemy('P2', fieldValue, row, column);
+                else
+                    chat.server.sendSinkInfoToEnemy('P1', fieldValue, row, column);
+                ///                 ================================do modyfikacji====================
+                playflag = 1;
+                if (player[row][column][0] < 100) {
+                    setImage(row, column, 103, false);
+                    var shipno = player[row][column][1];
+                    if (--playersships[shipno][1] == 0) {
+                        sinkShip(player, shipno, false);
+                        alert("I sank your " + shiptypes[playersships[shipno][0]][0] + "!");
+                        updateStatus();
+                        if (--playerlives == 0) {
+                            alert("You loose! ");
+                            playflag = false;
+                        }
+                    }
+                } else if (player[y][x][0] == 100) {
+                    setImage(row, column, 102, false);
+                }
+
+
+
+            };
+
+            // Set initial focus to message input box.
+            $('#message').focus();
+
+            // Connections start.
+            $.connection.hub.start().done(function () {
+                // Add new user
+                chat.server.addUser(playerName);
+                $('#sendMessageButton').click(function () {
+                    // Call the Send method on the hub.
+                    chat.server.send(playerName, $('#message').val());
+
+                    // Bieniek !! twoja funkcja !
+                    ///  chat.server.sendPrivateMessage("Pszemek", $('#message').val());
+
+                    // Clear text box and reset focus for next comment.
+                    $('#message').val('').focus();
+                });
+            });
+
+
+            // This optional function html-encodes messages for display in the page.
+            function htmlEncode(value) {
+                var encodedValue = $('<div />').text(value).html();
+                return encodedValue;
+            }
+
+
+            // Submit if key -> Enter down
+            $("#message").keyup(function (event) {
+                if (event.keyCode == 13) {
+                    $("#sendMessageButton").click();
+                }
+            });
+
+            /*----------------------------------------------------------------------------------- Chat End------------------*/
+            /* Preload all the images, to prevent delays during play*/
+            var preloaded = [];
+
+            function imagePreload() {
+                var i, ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 100, 101, 102, 103, 201, 202, 203, 204, 205, 206];
+                window.status = "Preloading images...please wait";
+                for (i = 0; i < ids.length; ++i) {
+                    var img = new Image, name = "batt" + ids[i] + ".gif";
+                    img.src = name;
+                    preloaded[i] = img;
+                }
+                window.status = "";
+            }
+
+            /* Function to place the ships in the grid*/
+            function setupPlayer(ispc) {
+                var y, x;
+                grid = [];
+                for (y = 0; y < gridx; ++y) {
+                    grid[y] = [];
+                    for (x = 0; x < gridx; ++x)
+                        grid[y][x] = [100, -1, 0];
+                }
+
+                var shipno = 0;
+                var s;
+                for (s = shiptypes.length - 1; s >= 0; --s) {
+                    var i;
+                    for (i = 0; i < shiptypes[s][2]; ++i) {
+                        var d = Math.floor(Math.random() * 2);
+                        var len = shiptypes[s][1], lx = gridx, ly = gridy, dx = 0, dy = 0;
+                        if (d == 0) {
+                            lx = gridx - len;
+                            dx = 1;
+                        } else {
+                            ly = gridy - len;
+                            dy = 1;
+                        }
+                        var x, y, ok;
+
+
+                        do {
+                            y = Math.floor(Math.random() * ly);
+                            x = Math.floor(Math.random() * lx);
+                            var j, cx = x, cy = y;
+                            ok = true;
+                            for (j = 0; j < len; ++j) {
+                                if (grid[cy][cx][0] < 100) {
+                                    ok = false;
+                                    break;
+                                }
+
+                                if (cy > 0 && cy < gridy - 1)
+                                    if (cx > 0 && cx < gridx - 1)
+                                        if (grid[cy - 1][cx][0] < 100 || grid[cy - 1][cx + 1][0] < 100 || grid[cy - 1][cx - 1][0] < 100 || grid[cy + 1][cx][0] < 100 || grid[cy + 1][cx + 1][0] < 100 || grid[cy + 1][cx - 1][0] < 100) {
+                                            ok = false;
+                                            break;
+                                        }
+
+                                cx += dx;
+                                cy += dy;
+                            }
+                        } while (!ok);
+
+
+                        var j, cx = x, cy = y;
+                        for (j = 0; j < len; ++j) {
+                            grid[cy][cx][0] = ship[d][s][j];
+                            grid[cy][cx][1] = shipno;
+                            grid[cy][cx][2] = dead[d][s][j];
+                            cx += dx;
+                            cy += dy;
+                        }
+                        if (ispc) {
+                            computersships[shipno] = [s, shiptypes[s][1]];
+                            computerlives++;
+                        } else {
+                            playersships[shipno] = [s, shiptypes[s][1]];
+                            playerlives++;
+                        }
+                        shipno++;
+                    }
+                }
+                return grid;
+            }
+
+            /* Change an image shown on a grid*/
+            function setImage(y, x, id, ispc) {
+                if (ispc) {
+                    computer[y][x][0] = id;
+                    document.images["pc" + y + "_" + x].src = "/Content/Images/batt" + id + ".gif";
+                } else {
+                    player[y][x][0] = id;
+                    document.images["ply" + y + "_" + x].src = "/Content/Images/batt" + id + ".gif";
+                }
+            }
+
+            /* Function to insert HTML source for a grid*/
+            function showGrid(ispc) {
+                var y, x;
+                document.write('<table style="line-height:0%">');
+                for (y = 0; y < gridy; ++y) {
+                    document.write('<tr>');
+                    for (x = 0; x < gridx; ++x) {
+                        if (ispc) {
+                            document.write('<td><a href="javascript:gridClick(' + y + ',' + x + '); "><img name="pc' + y + '_' + x + '" src="../Content/Images/batt100.gif"  width=16 height=16></a></td>');
+                            if (x == gridx - 1) {
+                                document.write('<td>&nbsp;&nbsp;&nbsp;</td>');
+                            }
+                        } else
+                            document.write('<td><a href="javascript:void(0);"><img name="ply' + y + '_' + x + '" src="../Content/Images/batt' + player[y][x][0] + '.gif" display:block width=16 height=16></a></td>');
+                    }
+                    document.write('</tr>');
+                }
+                document.write(' </table>')
+            }
+
+            /* Handler for clicking on the grid*/
+            function gridClick(y, x) {
+
+                if (playflag) {
+
+                    /// moje mmodyfikacje
+
+                    if (playerName === 'P1' && playflag) {
+                        playflag = 0;
+                        chat.server.sendCoordinates('P2', y, x);
+                    } else {
+                        playflag = 0;
+                        chat.server.sendCoordinates('P1', y, x);
+                    }
+
+
+
+
+                    /// koniec moich modyfikacji
+
+                }
+            }
+
+
+
+            /* When whole ship is hit, show it using changed graphics*/
+            function sinkShip(grid, shipno, ispc) {
+                var y, x;
+                for (y = 0; y < gridx; ++y) {
+                    for (x = 0; x < gridx; ++x) {
+                        if (grid[y][x][1] == shipno)
+                            if (ispc) setImage(y, x, computer[y][x][2], true);
+                            else {
+                                setImage(y, x, player[y][x][2], false);
+                                var fieldValue = player[y][x][2];
+
+                                ///----------------------------------------------------- do poprawy --------------------------------------------------
+                                if (playerName === 'P1')
+                                    chat.server.sendInfoToEnemy('P2', fieldValue, y, x);
+                                else
+                                    chat.server.sendInfoToEnemy('P1', fieldValue, y, x);
+                                ///----------------------------------------------------- do poprawy --------------------------------------------------
+                            }
+                    }
+                }
+            }
+
+            /* Show location of all the computers ships - when player has lost*/
+            function knowYourEnemy() {
+                var y, x;
+                for (y = 0; y < gridx; ++y) {
+                    for (x = 0; x < gridx; ++x) {
+                        if (computer[y][x][0] == 103)
+                            setImage(y, x, computer[y][x][2], true);
+                        else if (computer[y][x][0] < 100)
+                            setImage(y, x, computer[y][x][0], true);
+                    }
+                }
+            }
+
+            /* Show how many ships computer has left*/
+            function updateStatus() {
+                var f = false, i, s = "Computer has ";
+                for (i = 0; i < computersships.length; ++i) {
+                    if (computersships[i][1] > 0) {
+                        if (f) s = s + ", ";
+                        else f = true;
+                        s = s + shiptypes[computersships[i][0]][0];
+                    }
+                }
+                if (!f) s = s + "nothing left, thanks to you!";
+                statusmsg = s;
+                window.status = statusmsg;
+            }
+
+            function setStatus() {
+                window.status = statusmsg;
+            }
+
+            /* Start the game!*/
+            imagePreload();
+            player = setupPlayer(false);
+            computer = setupPlayer(true);
+            document.write("<center><table><tr><td align=center><p class='heading'>COMPUTER'S FLEET</p></td>" +
+                "<td align=center><p class='heading'>PLAYER'S FLEET</p></td></tr><tr><td>");
+            showGrid(true);
+            document.write("</td><td>");
+            showGrid(false);
+            document.write("</td></tr></table></center>");
+            updateStatus();
+            setInterval("setStatus();", 500);
+            //  End -->
+        </script>
+    }
+    <div align="center">
+        <iframe width="640" height="360" src="https://www.youtube.com/embed/qYq85kcIlVc" frameborder="0"></iframe>
+    </div>
+</body>
+</html>

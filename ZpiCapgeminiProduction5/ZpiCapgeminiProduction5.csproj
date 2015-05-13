@@ -162,6 +162,7 @@
     <Compile Include="Models\GRACZ.cs">
       <DependentUpon>DatabaseEntityModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GraczMetadata.cs" />
     <Compile Include="Models\POTYCZKI.cs">
       <DependentUpon>DatabaseEntityModel.tt</DependentUpon>
     </Compile>
@@ -251,13 +252,15 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\BattleShips\BattleShips.cshtml" />
+    <Content Include="Views\BattleShips\BattleShipsVsPc.cshtml" />
     <Content Include="Views\BattleShips\Chat.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
     <Content Include="Views\BattleShips\UsersList.cshtml" />
     <Content Include="Views\BattleShips\UsersIndex.cshtml" />
+    <Content Include="Views\BattleShips\BattleShipsVsPlayer.cshtml" />
+    <Content Include="Views\Home\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -11,7 +11,12 @@ namespace ZpiCapgeminiProduction5.Controllers
     public class BattleShipsController : Controller
     {
         // GET: BattleShips
-        public ActionResult BattleShips()
+        public ActionResult BattleShipsVsPc()
+        {
+            return View();
+        }
+
+        public ActionResult BattleShipsVsPlayer()
         {
             return View();
         }

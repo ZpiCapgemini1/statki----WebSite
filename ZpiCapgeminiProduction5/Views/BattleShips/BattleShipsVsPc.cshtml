@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "BattleShips";
+    ViewBag.Title = "BattleShipsVsPc";
 }
 
 <h2>BattleShips</h2>
@@ -16,8 +16,8 @@
 <body>
 
     <script language="JavaScript">
-//<!-- Begin
-/* Information used to draw the ships*/
+        //<!-- Begin
+        /* Information used to draw the ships*/
         var ship = [[[1, 5], [1, 2, 5], [1, 2, 3, 5], [1, 2, 3, 4, 5]], [[6, 10], [6, 7, 10], [6, 7, 8, 10], [6, 7, 8, 9, 10]]];
 
         /* Information used to draw sunk ships*/
@@ -69,6 +69,8 @@
                         dy = 1;
                     }
                     var x, y, ok;
+
+
                     do {
                         y = Math.floor(Math.random() * ly);
                         x = Math.floor(Math.random() * lx);
@@ -79,10 +81,20 @@
                                 ok = false;
                                 break;
                             }
+
+                            if (cy > 0 && cy < gridy - 1)
+                                if (cx > 0 && cx < gridx - 1)
+                                    if (grid[cy - 1][cx][0] < 100 || grid[cy - 1][cx + 1][0] < 100 || grid[cy - 1][cx - 1][0] < 100 || grid[cy + 1][cx][0] < 100 || grid[cy + 1][cx + 1][0] < 100 || grid[cy + 1][cx - 1][0] < 100) {
+                                        ok = false;
+                                        break;
+                                    }
+
                             cx += dx;
                             cy += dy;
                         }
                     } while (!ok);
+
+
                     var j, cx = x, cy = y;
                     for (j = 0; j < len; ++j) {
                         grid[cy][cx][0] = ship[d][s][j];
@@ -285,10 +297,10 @@
         document.write("</td></tr></table></center>");
         updateStatus();
         setInterval("setStatus();", 500);
-//  End -->
+        //  End -->
     </script>
-<div align="center">
-    <iframe width="640" height="360" src="https://www.youtube.com/embed/qYq85kcIlVc" frameborder="0"></iframe>
-</div>
+    <div align="center">
+        <iframe width="640" height="360" src="https://www.youtube.com/embed/qYq85kcIlVc" frameborder="0"></iframe>
+    </div>
 </body>
 </html>

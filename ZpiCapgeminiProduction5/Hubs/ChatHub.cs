@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common.CommandTrees.ExpressionBuilder;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -20,9 +21,30 @@ namespace ZpiCapgeminiProduction5.Hubs
             Clients.Caller.SetUsersList(ConnectedUsers);
         }
 
+        public void SendSinkInfoToEnemy(string toUserName, int fieldValue,int row,int column)
+        {
+            var user = ConnectedUsers.FirstOrDefault(x => x.UserName == toUserName);
+            if (user != null)
+            {
+                var userId = user.ConnectionId;
+                Clients.Client(userId).GetSinkInfo(row, column, fieldValue);
+            }
+        }
+
+
+        public void SendInfoToEnemy(string toUserName, int fieldValue, int row, int column)
+        {
+            var user = ConnectedUsers.FirstOrDefault(x => x.UserName == toUserName);
+            if (user != null)
+            {
+                var userId = user.ConnectionId;
+                Clients.Client(userId).SinkShip(row, column, fieldValue);
+            }
+        }
+        
+
         public void SendCoordinates(string toUserName, int row, int column)
         {
-
             var user = ConnectedUsers.FirstOrDefault(x => x.UserName == toUserName);
             if (user != null)
             {
